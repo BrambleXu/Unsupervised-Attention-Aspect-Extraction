@@ -51,7 +51,7 @@ def create_model(args, maxlen, vocab):
 
     # Loss
     loss = MaxMargin(name='max_margin')([z_s, z_n, r_s])
-    model = Model(input=[sentence_input, neg_input], output=loss)
+    model = Model(inputs=[sentence_input, neg_input], outputs=loss)
 
     # Word embedding and aspect embedding initialization
     if args.emb_path:
