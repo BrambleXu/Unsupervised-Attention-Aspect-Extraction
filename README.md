@@ -44,11 +44,11 @@ One example of trained model for the restaurant domain has been put in pre_train
 
 ## Dependencies
 
-keras==2.1.6
-tensorflow==1.8.0
-numpy>=1.13.3
-gensim==3.4.0
-tqdm==4.23.4
+- keras==2.1.6
+- tensorflow==1.8.0
+- numpy>=1.13.3
+- gensim==3.4.0
+- tqdm==4.23.4
 
 
 ## Cite
