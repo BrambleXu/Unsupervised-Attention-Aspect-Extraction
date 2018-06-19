@@ -54,6 +54,9 @@ import reader as dataset
 ###### Get test data #############
 vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
 test_x = sequence.pad_sequences(test_x, maxlen=overall_maxlen)
+train_x = sequence.pad_sequences(train_x, maxlen=overall_maxlen)
+# train_x = train_x[0:30000]
+
 
 ############# Build model architecture, same as the model used for training #########
 from model import create_model
@@ -122,30 +125,44 @@ for w, ind in vocab.items():
 #                      [model.get_layer('att_weights').output, model.get_layer('p_t').output])
 # att_weights, aspect_probs = test_fn([test_x, 0])
 
+# save attention sentence embedding for training dataset
+train_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase()],
+                     [model.get_layer('att_weights').output, model.get_layer('p_t').output,
+                      model.get_layer('att_sentence').output])
+att_weights_train, aspect_probs_train, att_sentence_train = train_fn([train_x, 0])
+print('The shape of train dataset is: ', att_sentence_train.shape)
+print('Saving attention sentence embedding for train dataset')
+np.save(out_dir + '/att_sentence_train.npy', att_sentence_train)
+
+
+## save attention sentence embedding for test dataset
 test_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase()],
                      [model.get_layer('att_weights').output, model.get_layer('p_t').output,
                       model.get_layer('att_sentence').output])
-att_weights, aspect_probs, att_sentence = test_fn([test_x, 0])
+att_weights_test, aspect_probs_test, att_sentence_test = test_fn([test_x, 0])
+print('The shape of test dataset is: ', att_sentence_test.shape)
+print('Saving attention sentence embedding for test dataset')
+np.save(out_dir + '/att_sentence_test.npy', att_sentence_test)
 
 
-# Save attention weights on test sentences into a file
-att_out = codecs.open(out_dir + '/att_weights', 'w', 'utf-8')
-print('Saving attention weights on test sentences...')
-
-for c in range(len(test_x)):
-
-    att_out.write('----------------------------------------\n')
-    att_out.write(str(c) + '\n')
-
-    word_inds = [i for i in test_x[c] if i != 0]
-    line_len = len(word_inds)
-    weights = att_weights[c]
-    weights = weights[(overall_maxlen - line_len):]
-
-    words = [vocab_inv[i] for i in word_inds]
-    att_out.write(' '.join(words) + '\n')
-    for j in range(len(words)):
-        att_out.write(words[j] + ' ' + str(round(weights[j], 3)) + '\n')
+# # Save attention weights on test sentences into a file
+# att_out = codecs.open(out_dir + '/att_weights', 'w', 'utf-8')
+# print('Saving attention weights on test sentences...')
+#
+# for c in range(len(test_x)):
+#
+#     att_out.write('----------------------------------------\n')
+#     att_out.write(str(c) + '\n')
+#
+#     word_inds = [i for i in test_x[c] if i != 0]
+#     line_len = len(word_inds)
+#     weights = att_weights[c]
+#     weights = weights[(overall_maxlen - line_len):]
+#
+#     words = [vocab_inv[i] for i in word_inds]
+#     att_out.write(' '.join(words) + '\n')
+#     for j in range(len(words)):
+#         att_out.write(words[j] + ' ' + str(round(weights[j], 3)) + '\n')
 
 
 
