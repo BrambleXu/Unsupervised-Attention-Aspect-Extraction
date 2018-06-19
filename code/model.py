@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#  -*- coding: utf-8  -*-
-
 import logging
 
 import keras.backend as K
@@ -37,7 +34,7 @@ def create_model(args, maxlen, vocab):
     e_w = word_emb(sentence_input)
     y_s = Average()(e_w)
     att_weights = Attention(name='att_weights')([e_w, y_s])
-    z_s = WeightedSum()([e_w, att_weights])
+    z_s = WeightedSum(name='att_sentence')([e_w, att_weights])
 
     # Compute representations of negative instances
     e_neg = word_emb(neg_input)
