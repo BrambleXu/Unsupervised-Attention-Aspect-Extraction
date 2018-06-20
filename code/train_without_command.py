@@ -26,7 +26,7 @@ parser.add_argument("-as", "--aspect-size", dest="aspect_size", type=int, metava
                     help="The number of aspects specified by users (default=14)")
 parser.add_argument("--emb", dest="emb_path", type=str, metavar='<str>', help="The path to the word embeddings file")
 # here set epochs as 1, if using GPU, this can be set as 15
-parser.add_argument("--epochs", dest="epochs", type=int, metavar='<int>', default=1,
+parser.add_argument("--epochs", dest="epochs", type=int, metavar='<int>', default=15,
                     help="Number of epochs (default=15)")
 parser.add_argument("-n", "--neg-size", dest="neg_size", type=int, metavar='<int>', default=20,
                     help="Number of negative instances (default=20)")

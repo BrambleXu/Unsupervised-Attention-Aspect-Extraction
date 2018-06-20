@@ -38,9 +38,13 @@ def args_parser(list_of_args):
                     help="The weight of orthogonol regularizaiton (default=0.1)")
     return parser.parse_args(list_of_args)
 
-args = args_parser(["--domain", "restaurant",
-                    "-o", "output_dir"])
+#
+# args = args_parser(["--domain", "restaurant",
+#                     "-o", "output_dir"])
 
+## change dataset to the small restaurant data set, which has 1708 sentences
+args = args_parser(["--domain", "restaurant_small",
+                    "-o", "output_dir"])
 
 out_dir = args.out_dir_path + '/' + args.domain
 # out_dir = '../pre_trained_model/' + args.domain
@@ -49,7 +53,7 @@ U.print_args(args)
 assert args.algorithm in {'rmsprop', 'sgd', 'adagrad', 'adadelta', 'adam', 'adamax'}
 
 from keras.preprocessing import sequence
-import reader as dataset
+import reader_evaluation as dataset
 
 ###### Get test data #############
 vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
@@ -78,42 +82,42 @@ model.compile(optimizer=optimizer, loss=max_margin_loss, metrics=[max_margin_los
 
 ################ Evaluation ####################################
 
-def evaluation(true, predict, domain):
-    true_label = []
-    predict_label = []
-
-    if domain == 'restaurant':
-
-        for line in predict:
-            predict_label.append(line.strip())
-
-        for line in true:
-            true_label.append(line.strip())
-
-        print(classification_report(true_label, predict_label,
-                                    ['Food', 'Staff', 'Ambience', 'Anecdotes', 'Price', 'Miscellaneous'], digits=3))
-
-    else:
-        for line in predict:
-            label = line.strip()
-            if label == 'smell' or label == 'taste':
-                label = 'taste+smell'
-            predict_label.append(label)
-
-        for line in true:
-            label = line.strip()
-            if label == 'smell' or label == 'taste':
-                label = 'taste+smell'
-            true_label.append(label)
-
-        print(classification_report(true_label, predict_label,
-                                    ['feel', 'taste+smell', 'look', 'overall', 'None'], digits=3))
-
-
-def prediction(test_labels, aspect_probs, cluster_map, domain):
-    label_ids = np.argsort(aspect_probs, axis=1)[:, -1]
-    predict_labels = [cluster_map[label_id] for label_id in label_ids]
-    evaluation(open(test_labels), predict_labels, domain)
+# def evaluation(true, predict, domain):
+#     true_label = []
+#     predict_label = []
+#
+#     if domain == 'restaurant':
+#
+#         for line in predict:
+#             predict_label.append(line.strip())
+#
+#         for line in true:
+#             true_label.append(line.strip())
+#
+#         print(classification_report(true_label, predict_label,
+#                                     ['Food', 'Staff', 'Ambience', 'Anecdotes', 'Price', 'Miscellaneous'], digits=3))
+#
+#     else:
+#         for line in predict:
+#             label = line.strip()
+#             if label == 'smell' or label == 'taste':
+#                 label = 'taste+smell'
+#             predict_label.append(label)
+#
+#         for line in true:
+#             label = line.strip()
+#             if label == 'smell' or label == 'taste':
+#                 label = 'taste+smell'
+#             true_label.append(label)
+#
+#         print(classification_report(true_label, predict_label,
+#                                     ['feel', 'taste+smell', 'look', 'overall', 'None'], digits=3))
+#
+#
+# def prediction(test_labels, aspect_probs, cluster_map, domain):
+#     label_ids = np.argsort(aspect_probs, axis=1)[:, -1]
+#     predict_labels = [cluster_map[label_id] for label_id in label_ids]
+#     evaluation(open(test_labels), predict_labels, domain)
 
 
 # Create a dictionary that map word index to word
@@ -126,13 +130,13 @@ for w, ind in vocab.items():
 # att_weights, aspect_probs = test_fn([test_x, 0])
 
 # save attention sentence embedding for training dataset
-train_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase()],
-                     [model.get_layer('att_weights').output, model.get_layer('p_t').output,
-                      model.get_layer('att_sentence').output])
-att_weights_train, aspect_probs_train, att_sentence_train = train_fn([train_x, 0])
-print('The shape of train dataset is: ', att_sentence_train.shape)
-print('Saving attention sentence embedding for train dataset')
-np.save(out_dir + '/att_sentence_train.npy', att_sentence_train)
+# train_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase()],
+#                      [model.get_layer('att_weights').output, model.get_layer('p_t').output,
+#                       model.get_layer('att_sentence').output])
+# att_weights_train, aspect_probs_train, att_sentence_train = train_fn([train_x, 0])
+# print('The shape of train dataset is: ', att_sentence_train.shape)
+# print('Saving attention sentence embedding for train dataset')
+# np.save(out_dir + '/att_sentence_train.npy', att_sentence_train)
 
 
 ## save attention sentence embedding for test dataset

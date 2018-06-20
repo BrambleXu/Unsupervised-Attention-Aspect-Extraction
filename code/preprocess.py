@@ -16,15 +16,36 @@ def parse_sentence(line):
 def preprocess_train(domain):
     f = codecs.open('../datasets/'+domain+'/train.txt', 'r', 'utf-8')
     out = codecs.open('../preprocessed_data/'+domain+'/train.txt', 'w', 'utf-8')
-
     for line in f:
         tokens = parse_sentence(line)
+        # # if len(tokens) > 0:  ## if not comment this line, the sentence number will decrease
+        #     out.write(' '.join(tokens)+'\n')
         if len(tokens) > 0:
             out.write(' '.join(tokens)+'\n')
 
 
+## The original preprocess_test, which will first check the label in ['Food', 'Staff', 'Ambience']
+## we don't need this, so here we change this function
+# def preprocess_test(domain):
+#     # For restaurant domain, only keep sentences with single
+#     # aspect label that in {Food, Staff, Ambience}
+#
+#     f1 = codecs.open('../datasets/'+domain+'/test.txt', 'r', 'utf-8')
+#     f2 = codecs.open('../datasets/'+domain+'/test_label.txt', 'r', 'utf-8')
+#     out1 = codecs.open('../preprocessed_data/'+domain+'/test.txt', 'w', 'utf-8')
+#     out2 = codecs.open('../preprocessed_data/'+domain+'/test_label.txt', 'w', 'utf-8')
+#
+#     for text, label in zip(f1, f2):
+#         label = label.strip()
+#         if domain == 'restaurant' and label not in ['Food', 'Staff', 'Ambience']:
+#             continue
+#         tokens = parse_sentence(text)
+#         if len(tokens) > 0:
+#             out1.write(' '.join(tokens) + '\n')
+#             out2.write(label+'\n')
+
 def preprocess_test(domain):
-    # For restaurant domain, only keep sentences with single 
+    # For restaurant domain, only keep sentences with single
     # aspect label that in {Food, Staff, Ambience}
 
     f1 = codecs.open('../datasets/'+domain+'/test.txt', 'r', 'utf-8')
@@ -34,12 +55,14 @@ def preprocess_test(domain):
 
     for text, label in zip(f1, f2):
         label = label.strip()
-        if domain == 'restaurant' and label not in ['Food', 'Staff', 'Ambience']:
-            continue
         tokens = parse_sentence(text)
+        # if len(tokens) > 0: ## if not comment this line, the sentence number will decrease
+        #     out1.write(' '.join(tokens) + '\n')
+        #     out2.write(label+'\n')
         if len(tokens) > 0:
             out1.write(' '.join(tokens) + '\n')
             out2.write(label+'\n')
+
 
 def preprocess(domain):
     print('\t' + domain + ' train set ...')
