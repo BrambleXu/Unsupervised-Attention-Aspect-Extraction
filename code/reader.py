@@ -64,6 +64,7 @@ def read_dataset(domain, phase, vocab, maxlen):
     assert phase in {'train', 'test'}
 
     source = '../preprocessed_data/' + domain + '/' + phase + '.txt'
+    # source = '../preprocessed_data/restaurant/train.txt'
     num_hit, unk_hit, total = 0., 0., 0.
     maxlen_x = 0
     data_x = []
