@@ -2,13 +2,16 @@
 Codes and Dataset for ACL2017 paper ‘‘An unsupervised neural attention model for aspect extraction’’. [(pdf)](http://aclweb.org/anthology/P/P17/P17-1036.pdf)
 
 The original work is here: [Unsupervised-Aspect-Extraction](https://github.com/ruidan/Unsupervised-Aspect-Extraction).
-This repo is to rewrite this to work with Python3, latest Keras and TensorFlow
+
+There are two goals for this repo:
+- Making the project work with Python3, latest Keras and TensorFlow. You can find it in this [commit](https://github.com/BrambleXu/Unsupervised-Attention-Aspect-Extraction/tree/ed79abcaccc8e3287193270f65db44559b9a95f0).
+- Using this unsupervised attention model to extract sentence feature to contribute for the aspect classification problem. Here the sentence feature is the `Zs` in the [paper](http://aclweb.org/anthology/P/P17/P17-1036.pdf).
 
 
 ## Data
 You can find the pre-processed datasets and the pre-trained word embeddings in [[Download]](https://drive.google.com/open?id=1L4LRi3BWoCqJt5h45J2GIAW9eP_zjiNc). The zip file should be decompressed and put in the main folder.
 
-You can also download the original datasets of Restaurant domain and Beer domain in [[Download]](https://drive.google.com/open?id=1qzbTiJ2IL5ATZYNMp2DRkHvbFYsnOVAQ). For preprocessing, put the decompressed zip file in the main folder and run 
+You can also download the original datasets of Restaurant domain and Beer domain in [[Download]](https://drive.google.com/open?id=1qzbTiJ2IL5ATZYNMp2DRkHvbFYsnOVAQ). For preprocessing, put the decompressed zip file in the main folder and run
 ```
 python word2vec.py
 python preprocess.py
@@ -64,8 +67,3 @@ If you use the code, please cite the following paper:
   publisher = {Association for Computational Linguistics}
 }
 ```
-
-
-
-
-
