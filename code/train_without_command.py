@@ -62,7 +62,14 @@ if args.seed > 0:
 from keras.preprocessing import sequence
 import reader as dataset
 
-vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
+# vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
+
+train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
+test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
+
+# read data from csv file
+vocab, train_x, test_x, overall_maxlen = dataset.get_data2(train_path, test_path, vocab_size=args.vocab_size, maxlen=args.maxlen)
+
 
 train_x = sequence.pad_sequences(train_x, maxlen=overall_maxlen)
 test_x = sequence.pad_sequences(test_x, maxlen=overall_maxlen)

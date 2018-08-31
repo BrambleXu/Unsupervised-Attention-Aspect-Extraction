@@ -20,13 +20,13 @@ parser.add_argument("-e", "--embdim", dest="emb_dim", type=int, metavar='<int>',
                     help="Embeddings dimension (default=200)")
 parser.add_argument("-b", "--batch-size", dest="batch_size", type=int, metavar='<int>', default=50,
                     help="Batch size (default=50)")
-parser.add_argument("-v", "--vocab-size", dest="vocab_size", type=int, metavar='<int>', default=9000,
+parser.add_argument("-v", "--vocab-size", dest="vocab_size", type=int, metavar='<int>', default=4000,
                     help="Vocab size. '0' means no limit (default=9000)")
 parser.add_argument("-as", "--aspect-size", dest="aspect_size", type=int, metavar='<int>', default=14,
                     help="The number of aspects specified by users (default=14)")
 parser.add_argument("--emb", dest="emb_path", type=str, metavar='<str>', help="The path to the word embeddings file")
 # here set epochs as 1, if using GPU, this can be set as 15
-parser.add_argument("--epochs", dest="epochs", type=int, metavar='<int>', default=1,
+parser.add_argument("--epochs", dest="epochs", type=int, metavar='<int>', default=10,
                     help="Number of epochs (default=15)")
 parser.add_argument("-n", "--neg-size", dest="neg_size", type=int, metavar='<int>', default=20,
                     help="Number of negative instances (default=20)")

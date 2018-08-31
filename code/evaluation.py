@@ -34,7 +34,9 @@ parser.add_argument("--domain", dest="domain", type=str, metavar='<str>', defaul
 parser.add_argument("--ortho-reg", dest="ortho_reg", type=float, metavar='<float>', default=0.1,
                     help="The weight of orthogonol regularizaiton (default=0.1)")
 
-args = parser.parse_args()
+args = parser.parse_args(["--domain", "restaurant",
+                          "-o", "output_dir"])
+
 out_dir = args.out_dir_path + '/' + args.domain
 # out_dir = '../pre_trained_model/' + args.domain
 U.print_args(args)
@@ -116,7 +118,7 @@ test_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase(
 att_weights, aspect_probs = test_fn([test_x, 0])
 
 # Save attention weights on test sentences into a file
-att_out = codecs.open(out_dir + '/att_weights', 'w', 'utf-8')
+att_out = codecs.open(out_dir + '/test_att_weights', 'w', 'utf-8')
 print('Saving attention weights on test sentences...')
 
 for c in range(len(test_x)):
@@ -140,15 +142,15 @@ for c in range(len(test_x)):
 # Uncomment the below part for F scores
 ######################################################
 
-## cluster_map need to be specified manually according to the top words in each inferred aspect (save in aspect.log)
+# cluster_map need to be specified manually according to the top words in each inferred aspect (save in aspect.log)
 
-## map for the pre-trained restaurant model (under pre_trained_model/restaurant)
-# cluster_map = {0: 'Food', 1: 'Miscellaneous', 2: 'Miscellaneous', 3: 'Food',
-#            4: 'Miscellaneous', 5: 'Food', 6:'Price',  7: 'Miscellaneous', 8: 'Staff',
-#            9: 'Food', 10: 'Food', 11: 'Anecdotes',
-#            12: 'Ambience', 13: 'Staff'}
+# map for the pre-trained restaurant model (under pre_trained_model/restaurant)
+cluster_map = {0: 'Food', 1: 'Miscellaneous', 2: 'Miscellaneous', 3: 'Food',
+           4: 'Miscellaneous', 5: 'Food', 6:'Price',  7: 'Miscellaneous', 8: 'Staff',
+           9: 'Food', 10: 'Food', 11: 'Anecdotes',
+           12: 'Ambience', 13: 'Staff'}
 
 
-# print '--- Results on %s domain ---' % (args.domain)
-# test_labels = '../preprocessed_data/%s/test_label.txt' % (args.domain)
-# prediction(test_labels, aspect_probs, cluster_map, domain=args.domain)
+print('--- Results on %s domain ---' % (args.domain))
+test_labels = '../preprocessed_data/%s/test_label.txt' % (args.domain)
+prediction(test_labels, aspect_probs, cluster_map, domain=args.domain)

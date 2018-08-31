@@ -39,7 +39,7 @@ THEANO_FLAGS="device=gpu0,floatX=float32" python evaluation.py \
 ```
 Note that you should keep the values of arguments for evaluation the same as those for training (except *--emb*, you don't need to specify it), as we need to first rebuild the network architecture and then load the saved model weights.
 
-This will output a file *att_weights* that contains the attention weights on all test sentences in code/output_dir/$domain.
+This will output a file *test_att_weights* that contains the attention weights on all test sentences in code/output_dir/$domain.
 
 To assign each test sentence a gold aspect label, you need to first manually map each inferred aspect to a gold aspect label according to its top words, and then uncomment the bottom part in evaluation.py (line 136-144) for evaluaton using F scores.
 
