@@ -14,8 +14,6 @@ def soup2dict(sentence_nodes):
     i = 0
     for n in sentence_nodes:
         i += 1
-        sentence = {}
-        sentence['id'] = i
         aspect_term = []
         sentence['text'] = n.find('text').string
         if n.find('Opinions'):
