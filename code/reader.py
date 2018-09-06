@@ -116,7 +116,6 @@ def get_data(domain, vocab_size=0, maxlen=0):
 
 def read_dataset2(data, vocab, maxlen):
     """
-
     :param data:  [['judging', 'from', 'previous', 'posts', 'this', 'used']
                    ['to', 'be', 'a', 'good', 'place', ',', 'but', 'not', 'any', 'longer', '.']]
     :param vocab:
