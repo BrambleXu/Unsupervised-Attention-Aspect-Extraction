@@ -4,6 +4,7 @@ import numpy as np
 from time import time
 import utils as U
 import codecs
+from pathlib import Path
 
 logging.basicConfig(
     # filename='out.log',
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 parser = argparse.ArgumentParser()
 parser.add_argument("-o", "--out-dir", dest="out_dir_path", type=str, metavar='<str>', required=True,
                     help="The path to the output directory")
-parser.add_argument("-e", "--embdim", dest="emb_dim", type=int, metavar='<int>', default=200,
+parser.add_argument("-e", "--embdim", dest="emb_dim", type=int, metavar='<int>', default=300,
                     help="Embeddings dimension (default=200)")
 parser.add_argument("-b", "--batch-size", dest="batch_size", type=int, metavar='<int>', default=50,
                     help="Batch size (default=50)")
@@ -41,7 +42,7 @@ parser.add_argument("--ortho-reg", dest="ortho_reg", type=float, metavar='<float
                     help="The weight of orthogonol regularizaiton (default=0.1)")
 
 # args = parser.parse_args()
-args = parser.parse_args(["--emb", "../preprocessed_data/restaurant/w2v_embedding",
+args = parser.parse_args(["--emb", "../embedding_weights/glove.840B.300d.txt",
                           "--domain", "restaurant",
                           "-o", "output_dir"])
 
@@ -64,8 +65,8 @@ import reader as dataset
 
 # vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
 
-train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
-test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
+# train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
+# test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
 
 # read data from csv file
 vocab, train_x, test_x, overall_maxlen = dataset.get_data2(train_path, test_path, vocab_size=args.vocab_size, maxlen=args.maxlen)
@@ -129,7 +130,6 @@ model.get_layer('word_emb').trainable = False
 model.compile(optimizer=optimizer, loss=max_margin_loss, metrics=[max_margin_loss])
 
 ## Training
-#
 from tqdm import tqdm
 
 logger.info(
