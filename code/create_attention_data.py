@@ -5,9 +5,8 @@ import argparse
 import codecs
 
 import numpy as np
-from sklearn.metrics import classification_report
+import tqdm
 from pathlib import Path
-
 import utils as U
 
 ######### Get hyper-params in order to rebuild the model architecture ###########
@@ -15,7 +14,7 @@ import utils as U
 parser = argparse.ArgumentParser()
 parser.add_argument("-o", "--out-dir", dest="out_dir_path", type=str, metavar='<str>', required=True,
                     help="The path to the output directory")
-parser.add_argument("-e", "--embdim", dest="emb_dim", type=int, metavar='<int>', default=200,
+parser.add_argument("-e", "--embdim", dest="emb_dim", type=int, metavar='<int>', default=300,
                     help="Embeddings dimension (default=200)")
 parser.add_argument("-b", "--batch-size", dest="batch_size", type=int, metavar='<int>', default=50,
                     help="Batch size (default=50)")
@@ -39,7 +38,7 @@ parser.add_argument("--ortho-reg", dest="ortho_reg", type=float, metavar='<float
                     help="The weight of orthogonol regularizaiton (default=0.1)")
 
 # args = parser.parse_args()
-args = parser.parse_args(["--emb", "../preprocessed_data/restaurant/w2v_embedding",
+args = parser.parse_args(["--emb", "../embedding_weights/gensim_glove_6B_300d.txt",
                           "--domain", "restaurant",
                           "-o", "output_dir"])
 
@@ -72,7 +71,6 @@ from optimizers import get_optimizer
 
 optimizer = get_optimizer(args)
 
-
 def max_margin_loss(y_true, y_pred):
     return K.mean(y_pred)
 
@@ -80,7 +78,7 @@ def max_margin_loss(y_true, y_pred):
 model = create_model(args, overall_maxlen, vocab)
 
 ## Load the save model parameters
-model.load_weights('../pre_trained_model/restaurant' + '/model_param')
+model.load_weights('../output_dir/restaurant' + '/model_param')
 model.compile(optimizer=optimizer, loss=max_margin_loss, metrics=[max_margin_loss])
 
 
@@ -118,3 +116,5 @@ for c in range(len(test_x)):
     att_out.write(' '.join(words) + '\n')
     for j in range(len(words)):
         att_out.write(words[j] + ' ' + str(round(weights[j], 3)) + '\n')
+
+

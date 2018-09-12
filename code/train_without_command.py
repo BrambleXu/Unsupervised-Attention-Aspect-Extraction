@@ -42,7 +42,7 @@ parser.add_argument("--ortho-reg", dest="ortho_reg", type=float, metavar='<float
                     help="The weight of orthogonol regularizaiton (default=0.1)")
 
 # args = parser.parse_args()
-args = parser.parse_args(["--emb", "../embedding_weights/glove.840B.300d.txt",
+args = parser.parse_args(["--emb", "../embedding_weights/gensim_glove_6B_300d.txt",
                           "--domain", "restaurant",
                           "-o", "output_dir"])
 
@@ -65,8 +65,8 @@ import reader as dataset
 
 # vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
 
-# train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
-# test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
+train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
+test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
 
 # read data from csv file
 vocab, train_x, test_x, overall_maxlen = dataset.get_data2(train_path, test_path, vocab_size=args.vocab_size, maxlen=args.maxlen)
@@ -194,3 +194,15 @@ for ii in range(args.epochs):
     logger.info('Epoch %d, train: %is' % (ii, tr_time))
     logger.info(
         'Total loss: %.4f, max_margin_loss: %.4f, ortho_reg: %.4f' % (loss, max_margin_loss, loss - max_margin_loss))
+
+
+test_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase()],
+                     [model.get_layer('test_att_weights').output,
+                      model.get_layer('p_t').output,
+                      model.get_layer('att_sentence').output])
+train_att_weights, _, train_att_sentences = test_fn([train_x, 0])
+test_att_weights, _, test_att_sentences = test_fn([test_x, 0])
+
+np.save('output_dir/semeval-2016/train_att_sentences.npy', train_att_sentences)
+np.save('output_dir/semeval-2016/test_att_sentences.npy', test_att_sentences)
+

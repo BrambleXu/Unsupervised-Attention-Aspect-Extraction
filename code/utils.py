@@ -5,7 +5,25 @@ import errno
 import logging
 import os
 import sys
+import tqdm
+import numpy as np
 
+def load_glove(file):
+    """Loads GloVe vectors in numpy array.
+    Args:
+        file (str): a path to a glove file.
+    Return:
+        dict: a dict of numpy arrays.
+    """
+    embeddings_index = {}
+    with open(file, encoding='utf8') as f:
+        for i, line in tqdm(enumerate(f)):
+            values = line.split()
+            word = ''.join(values[:-300])
+            coefs = np.asarray(values[-300:], dtype='float32')
+            embeddings_index[word] = coefs
+
+    return embeddings_index
 
 # -----------------------------------------------------------------------------------------------------------#
 
