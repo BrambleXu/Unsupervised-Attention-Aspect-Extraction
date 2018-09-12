@@ -21,7 +21,7 @@ parser.add_argument("-e", "--embdim", dest="emb_dim", type=int, metavar='<int>',
                     help="Embeddings dimension (default=200)")
 parser.add_argument("-b", "--batch-size", dest="batch_size", type=int, metavar='<int>', default=50,
                     help="Batch size (default=50)")
-parser.add_argument("-v", "--vocab-size", dest="vocab_size", type=int, metavar='<int>', default=9000,
+parser.add_argument("-v", "--vocab-size", dest="vocab_size", type=int, metavar='<int>', default=45000,
                     help="Vocab size. '0' means no limit (default=9000)")
 parser.add_argument("-as", "--aspect-size", dest="aspect_size", type=int, metavar='<int>', default=14,
                     help="The number of aspects specified by users (default=14)")
@@ -65,15 +65,20 @@ import reader as dataset
 
 # vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
 
-train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
-test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
 
-# read data from csv file
-vocab, train_x, test_x, overall_maxlen = dataset.get_data2(train_path, test_path, vocab_size=args.vocab_size, maxlen=args.maxlen)
+## read data from csv file
+# train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
+# test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
+# vocab, train_x, test_x, overall_maxlen = dataset.get_data2(train_path, test_path, vocab_size=args.vocab_size, maxlen=args.maxlen)
+#
+# train_x = sequence.pad_sequences(train_x, maxlen=overall_maxlen)
+# test_x = sequence.pad_sequences(test_x, maxlen=overall_maxlen)
 
-
+# read data from original dataset,
+vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
 train_x = sequence.pad_sequences(train_x, maxlen=overall_maxlen)
 test_x = sequence.pad_sequences(test_x, maxlen=overall_maxlen)
+
 
 # train_x = train_x[0:30000]
 print('Number of training examples: ', len(train_x))
@@ -96,8 +101,11 @@ def sentence_batch_generator(data, batch_size):
 
 
 def negative_batch_generator(data, batch_size, neg_size):
-    data_len = data.shape[0]
-    dim = data.shape[1]
+    # data_len = data.shape[0]
+    # dim = data.shape[1]
+    data_len = len(data)
+    dim = len(data[0])
+
 
     while True:
         indices = np.random.choice(data_len, batch_size * neg_size)
@@ -195,6 +203,13 @@ for ii in range(args.epochs):
     logger.info(
         'Total loss: %.4f, max_margin_loss: %.4f, ortho_reg: %.4f' % (loss, max_margin_loss, loss - max_margin_loss))
 
+# Predict the sentence vectors for semeval 2016
+
+vocab, train_x, test_x, overall_maxlen = dataset.get_data2(train_path, test_path, vocab_size=args.vocab_size, maxlen=args.maxlen)
+
+train_x = sequence.pad_sequences(train_x, maxlen=overall_maxlen)
+test_x = sequence.pad_sequences(test_x, maxlen=overall_maxlen)
+
 
 test_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase()],
                      [model.get_layer('test_att_weights').output,
@@ -203,6 +218,6 @@ test_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase(
 train_att_weights, _, train_att_sentences = test_fn([train_x, 0])
 test_att_weights, _, test_att_sentences = test_fn([test_x, 0])
 
-np.save('output_dir/semeval-2016/train_att_sentences.npy', train_att_sentences)
-np.save('output_dir/semeval-2016/test_att_sentences.npy', test_att_sentences)
+np.save('output_dir/semeval-2016/train_att_sentences_v2.npy', train_att_sentences)
+np.save('output_dir/semeval-2016/test_att_sentences_v2.npy', test_att_sentences)
 
