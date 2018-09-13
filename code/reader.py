@@ -198,31 +198,27 @@ def read_dataset3(domain, phase, vocab, maxlen):
     return data_x, maxlen_x
 
 
-def get_data3(domain, vocab_size=0, maxlen=0):
-    """Read unsupervised data from text
-    :param domain:
-    :param vocab_size:
-    :param maxlen:
-    :return:
+def get_data3(train_path, test_path, vocab, vocab_size=0, maxlen=0):
     """
-    print('Reading data from', domain)
-    print(' Creating vocab ...')
-    vocab = create_vocab3(domain, maxlen, vocab_size)
+    We already have vocab, so there is no need to create new vocab
+
+    """
     print(' Reading dataset ...')
     print('  train set')
-    train_x, train_maxlen = read_dataset3(domain, 'train', vocab, maxlen)
+    train_x, train_maxlen = read_dataset2(x_train, vocab, maxlen)
     print('  test set')
-    test_x, test_maxlen = read_dataset3(domain, 'test', vocab, maxlen)
+    test_x, test_maxlen = read_dataset2(x_test, vocab, maxlen)
     maxlen = max(train_maxlen, test_maxlen)
     return vocab, train_x, test_x, maxlen
+
 
 def read_dataset2(data, vocab, maxlen):
     """
     :param data:  [['judging', 'from', 'previous', 'posts', 'this', 'used']
                    ['to', 'be', 'a', 'good', 'place', ',', 'but', 'not', 'any', 'longer', '.']]
-    :param vocab:
-    :param maxlen:
-    :return:
+    :param vocab: a dictionary contain word and index
+    :param maxlen: the max length of sentence
+    :return: sentence represented as index
     """
     # assert domain in {'restaurant', 'beer'}
     # assert phase in {'train', 'test'}
@@ -259,10 +255,10 @@ def get_data2(train_path, test_path, vocab_size=0, maxlen=0):
 
     x_train, y_train = df2data(data_train)
     x_test, y_test = df2data(data_test)
-    x_all = x_train.copy()
-    for x in x_test:
-        x_all.append(x)
-    vocab = create_vocab2(x_all, maxlen, vocab_size)
+    # x_all = x_train.copy()
+    # for x in x_test:
+    #     x_all.append(x)
+    vocab = create_vocab2(x_train, maxlen, vocab_size)
     print(' Reading dataset ...')
     print('  train set')
     train_x, train_maxlen = read_dataset2(x_train, vocab, maxlen)
