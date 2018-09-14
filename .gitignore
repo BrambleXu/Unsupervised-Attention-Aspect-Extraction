@@ -76,3 +76,4 @@ target/
 embedding_weights/*
 # but keep the folder
 !embedding_weights/.gitkeep
+model_param
