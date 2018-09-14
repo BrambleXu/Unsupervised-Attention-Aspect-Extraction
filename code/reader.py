@@ -201,15 +201,20 @@ def read_dataset3(domain, phase, vocab, maxlen):
 def get_data3(train_path, test_path, vocab, vocab_size=0, maxlen=0):
     """
     We already have vocab, so there is no need to create new vocab
-
+    And the maxlen should be same with the data used in attention model
     """
+    print('Reading data from', train_path)
+    data_train = pd.read_csv(train_path)
+    data_test = pd.read_csv(test_path)
+    x_train, y_train = df2data(data_train)
+    x_test, y_test = df2data(data_test)
+
     print(' Reading dataset ...')
     print('  train set')
     train_x, train_maxlen = read_dataset2(x_train, vocab, maxlen)
     print('  test set')
     test_x, test_maxlen = read_dataset2(x_test, vocab, maxlen)
-    maxlen = max(train_maxlen, test_maxlen)
-    return vocab, train_x, test_x, maxlen
+    return vocab, train_x, test_x
 
 
 def read_dataset2(data, vocab, maxlen):
@@ -255,9 +260,6 @@ def get_data2(train_path, test_path, vocab_size=0, maxlen=0):
 
     x_train, y_train = df2data(data_train)
     x_test, y_test = df2data(data_test)
-    # x_all = x_train.copy()
-    # for x in x_test:
-    #     x_all.append(x)
     vocab = create_vocab2(x_train, maxlen, vocab_size)
     print(' Reading dataset ...')
     print('  train set')

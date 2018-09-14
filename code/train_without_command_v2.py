@@ -5,6 +5,9 @@ from time import time
 import utils as U
 import codecs
 from pathlib import Path
+from keras.preprocessing import sequence
+import reader as dataset
+
 
 logging.basicConfig(
     # filename='out.log',
@@ -59,20 +62,6 @@ if args.seed > 0:
 # ###############################################################################################################################
 # ## Prepare data
 # #
-
-from keras.preprocessing import sequence
-import reader as dataset
-
-# vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
-
-
-## read data from csv file
-# train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
-# test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
-# vocab, train_x, test_x, overall_maxlen = dataset.get_data2(train_path, test_path, vocab_size=args.vocab_size, maxlen=args.maxlen)
-#
-# train_x = sequence.pad_sequences(train_x, maxlen=overall_maxlen)
-# test_x = sequence.pad_sequences(test_x, maxlen=overall_maxlen)
 
 # read data from original dataset,
 vocab, train_x, test_x, overall_maxlen = dataset.get_data(args.domain, vocab_size=args.vocab_size, maxlen=args.maxlen)
@@ -203,15 +192,16 @@ for ii in range(args.epochs):
     logger.info(
         'Total loss: %.4f, max_margin_loss: %.4f, ortho_reg: %.4f' % (loss, max_margin_loss, loss - max_margin_loss))
 
+
+
 # Predict the sentence vectors for semeval 2016
 ## read data from csv file
 train_path = Path.cwd().parent.joinpath('datasets/semeval-2016/train.csv')
 test_path = Path.cwd().parent.joinpath('datasets/semeval-2016/test.csv')
 
-
-
 # We already have vocab, so here we should use the vocab above to represent the new data
-vocab, train_x, test_x, overall_maxlen = dataset.get_data3(train_path, test_path, vocab, vocab_size=args.vocab_size, maxlen=args.maxlen)
+# Attention: maxlen should be same with above dataset, and use the same vocab
+vocab, train_x, test_x = dataset.get_data3(train_path, test_path, vocab, vocab_size=args.vocab_size, maxlen=overall_maxlen)
 
 train_x = sequence.pad_sequences(train_x, maxlen=overall_maxlen)
 test_x = sequence.pad_sequences(test_x, maxlen=overall_maxlen)
@@ -223,7 +213,9 @@ test_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase(
 train_att_weights, _, train_att_sentences = test_fn([train_x, 0])
 test_att_weights, _, test_att_sentences = test_fn([test_x, 0])
 
-np.save('output_dir/semeval-2016/train_att_sentences_v1.npy', train_att_sentences)
-np.save('output_dir/semeval-2016/test_att_sentences_v1.npy', test_att_sentences)
-np.save('output_dir/semeval-2016/train_att_weights_v1.npy', train_att_weights)
-np.save('output_dir/semeval-2016/test_att_weights_v1.npy', test_att_weights)
+np.save('output_dir/semeval-2016/train_att_sentences_v2.npy', train_att_sentences)
+np.save('output_dir/semeval-2016/test_att_sentences_v2.npy', test_att_sentences)
+# np.save('output_dir/semeval-2016/train_att_weights_v2.npy', train_att_weights)
+# np.save('output_dir/semeval-2016/test_att_weights_v2.npy', test_att_weights)
+
+print('Saved version 2 files')

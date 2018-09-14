@@ -201,7 +201,7 @@ for ii in range(args.epochs):
         'Total loss: %.4f, max_margin_loss: %.4f, ortho_reg: %.4f' % (loss, max_margin_loss, loss - max_margin_loss))
 
 
-# Get the weights and sentence vector from attention layer
+#============Get the weights and sentence vector from attention layer=========
 test_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase()],
                      [model.get_layer('test_att_weights').output,
                       model.get_layer('p_t').output,
@@ -211,6 +211,7 @@ test_att_weights, _, test_att_sentences = test_fn([test_x, 0])
 
 np.save('output_dir/semeval-2016/train_att_sentences_v1.npy', train_att_sentences)
 np.save('output_dir/semeval-2016/test_att_sentences_v1.npy', test_att_sentences)
-np.save('output_dir/semeval-2016/train_att_weights_v1.npy', train_att_weights)
-np.save('output_dir/semeval-2016/test_att_weights_v1.npy', test_att_weights)
+# np.save('output_dir/semeval-2016/train_att_weights_v1.npy', train_att_weights)
+# np.save('output_dir/semeval-2016/test_att_weights_v1.npy', test_att_weights)
 
+print('Saved version 1 files')
