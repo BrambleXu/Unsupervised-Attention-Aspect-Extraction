@@ -32,7 +32,8 @@ def create_model(args, maxlen, vocab):
 
     # Compute sentence representation
     e_w = word_emb(sentence_input)
-    y_s = Average()(e_w)
+    # y_s = Average()(e_w)
+    y_s = Average(name='average_embedding')(e_w)
     att_weights = Attention(name='test_att_weights')([e_w, y_s])
     z_s = WeightedSum(name='att_sentence')([e_w, att_weights])
 
