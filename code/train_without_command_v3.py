@@ -204,14 +204,68 @@ for ii in range(args.epochs):
 #============Get the weights and sentence vector from attention layer=========
 test_fn = K.function([model.get_layer('sentence_input').input, K.learning_phase()],
                      [model.get_layer('average_embedding').output,
+                      model.get_layer('test_att_weights').output, # attention score for each example
                       model.get_layer('p_t').output,
                       model.get_layer('att_sentence').output])
-train_word_emb, _, train_att_sentences = test_fn([train_x, 0])
-test_word_emb, _, test_att_sentences = test_fn([test_x, 0])
+
+train_word_emb, train_att_weights, _, train_att_sentences = test_fn([train_x, 0])
+test_word_emb, test_att_weights, _, test_att_sentences = test_fn([test_x, 0])
 
 np.save('output_dir/semeval-2016/train_att_sentences_v3.npy', train_att_sentences)
 np.save('output_dir/semeval-2016/test_att_sentences_v3.npy', test_att_sentences)
 np.save('output_dir/semeval-2016/train_word_emb_v3.npy', train_word_emb)
 np.save('output_dir/semeval-2016/test_word_emb_v3.npy', test_word_emb)
 
-print('Saved version 1 files')
+print('Saved version 3 files')
+
+
+# Uncomment below to see the attention words in each sentence
+# xxxx_att_weights contains attention score
+# train_att_weights.shape is (2000, 77)
+# test_att_weights.shape is (676, 77)
+
+
+# Save attention weights on test sentences into a file
+att_out = codecs.open(out_dir + '/test_att_weights', 'w', 'utf-8')
+
+
+def get_att_list(test_x, test_att_weights, overall_maxlen, vocab_inv):
+    train_att_weights = []
+
+    for c in range(len(test_x)):
+        word_inds = [i for i in test_x[c] if i != 0]
+        line_len = len(word_inds)
+        weights = test_att_weights[c]
+        weights = weights[(overall_maxlen - line_len):]
+        words = [vocab_inv[i] for i in word_inds]
+        sen_dic = dict(zip(words, weights))
+        train_att_weights.append(sen_dic)
+
+    return train_att_weights
+
+train_att_weights_list = get_att_list(train_x, train_att_weights, overall_maxlen, vocab_inv)
+test_att_weights_list = get_att_list(test_x, test_att_weights, overall_maxlen, vocab_inv)
+
+import pickle
+with open('train_att_weights_list.pkl', 'wb') as f:
+    pickle.dump(train_att_weights_list, f)
+
+with open('test_att_weights_list.pkl', 'wb') as f:
+    pickle.dump(test_att_weights_list, f)
+
+# def save_att_file(test_x):
+#     for c in range(len(test_x)):
+#
+#         att_out.write('----------------------------------------\n')
+#         att_out.write(str(c) + '\n')
+#
+#         word_inds = [i for i in test_x[c] if i != 0]
+#         line_len = len(word_inds)
+#         weights = test_att_weights[c]
+#         weights = weights[(overall_maxlen - line_len):]
+#
+#         words = [vocab_inv[i] for i in word_inds]
+#         # att_out.write(' '.join(words) + '\n')
+#         # for j in range(len(words)):
+#         #     att_out.write(words[j] + ' ' + str(round(weights[j], 3)) + '\n')
+
