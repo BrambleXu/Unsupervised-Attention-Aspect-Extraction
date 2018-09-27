@@ -216,6 +216,8 @@ np.save('output_dir/semeval-2016/test_att_sentences_v3.npy', test_att_sentences)
 np.save('output_dir/semeval-2016/train_word_emb_v3.npy', train_word_emb)
 np.save('output_dir/semeval-2016/test_word_emb_v3.npy', test_word_emb)
 
+
+
 print('Saved version 3 files')
 
 
@@ -230,7 +232,8 @@ att_out = codecs.open(out_dir + '/test_att_weights', 'w', 'utf-8')
 
 
 def get_att_list(test_x, test_att_weights, overall_maxlen, vocab_inv):
-    train_att_weights = []
+    sent_words = []
+    sent_attention = []
 
     for c in range(len(test_x)):
         word_inds = [i for i in test_x[c] if i != 0]
@@ -239,19 +242,25 @@ def get_att_list(test_x, test_att_weights, overall_maxlen, vocab_inv):
         weights = weights[(overall_maxlen - line_len):]
         words = [vocab_inv[i] for i in word_inds]
         sen_dic = dict(zip(words, weights))
-        train_att_weights.append(sen_dic)
+        sent_words.append(words)
+        sent_attention.append(sen_dic)
 
-    return train_att_weights
+    return sent_words, sent_attention
 
-train_att_weights_list = get_att_list(train_x, train_att_weights, overall_maxlen, vocab_inv)
-test_att_weights_list = get_att_list(test_x, test_att_weights, overall_maxlen, vocab_inv)
+train_sent_words, train_sent_attention = get_att_list(train_x, train_att_weights, overall_maxlen, vocab_inv)
+test_sent_words, test_sent_attention= get_att_list(test_x, test_att_weights, overall_maxlen, vocab_inv)
 
 import pickle
-with open('train_att_weights_list.pkl', 'wb') as f:
-    pickle.dump(train_att_weights_list, f)
+pickle.dump( train_sent_attention, open( "train_sent_attention.pkl", "wb" ) )
+pickle.dump( train_sent_words, open( "train_sent_words.pkl", "wb" ) )
+pickle.dump( test_sent_attention, open( "test_sent_attention.pkl", "wb" ) )
+pickle.dump( test_sent_words, open( "test_sent_words.pkl", "wb" ) )
 
-with open('test_att_weights_list.pkl', 'wb') as f:
-    pickle.dump(test_att_weights_list, f)
+# with open('train_att_weights_list.pkl', 'wb') as f:
+#     pickle.dump(train_att_weights_list, f)
+#
+# with open('test_att_weights_list.pkl', 'wb') as f:
+#     pickle.dump(test_att_weights_list, f)
 
 # def save_att_file(test_x):
 #     for c in range(len(test_x)):
