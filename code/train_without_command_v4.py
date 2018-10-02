@@ -129,7 +129,7 @@ def max_margin_loss(y_true, y_pred):
 #### From here, we use for loop set the different aspect number ###
 #### You should copy below part to run
 # for aspect_number in [6, 8, 10, 12, 14, 16, 18, 20]:
-args.aspect_size = 10
+args.aspect_size = 16
 args.epochs = 12
 
 model = create_model(args, overall_maxlen, vocab)

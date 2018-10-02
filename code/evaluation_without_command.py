@@ -82,6 +82,8 @@ model = create_model(args, overall_maxlen, vocab)
 model.load_weights(out_dir + '/model_param')
 model.compile(optimizer=optimizer, loss=max_margin_loss, metrics=[max_margin_loss])
 
+
+
 ################ Evaluation ####################################
 
 # def evaluation(true, predict, domain):

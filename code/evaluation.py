@@ -137,7 +137,6 @@ for c in range(len(test_x)):
         att_out.write(words[j] + ' ' + str(round(weights[j], 3)) + '\n')
 
 
-
 ######################################################
 # Uncomment the below part for F scores
 ######################################################
